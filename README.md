@@ -6,7 +6,7 @@ A simple, local-first web app for checking whether computers on your LAN are rea
 
 ## Why
 
-I often use my computer remotely over VPN, and sometimes I forget to turn it on. Hence, this is the solution.
+I often use my computer remotely over VPN, and sometimes I forget to turn it on. Hence, this is the solution, vibecoded with 5.6 Sol and 5.6 Terra subagents.
 
 ## Features
 
