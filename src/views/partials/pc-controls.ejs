@@ -1,0 +1,35 @@
+<% /* Locals: pc: PcRecord; status?: StatusSnapshot. Returned by GET status and POST wake. */ %>
+<%
+  const current = status || { state: "checking" };
+  const labels = {
+    checking: "Checking status",
+    reachable: "Reachable",
+    unreachable: "Unreachable",
+    waking: "Waking up",
+    error: "Status unavailable"
+  };
+  const state = current.state || "checking";
+  const statusText = current.message || labels[state] || "Status unavailable";
+  const trigger = state === "checking"
+    ? "load delay:100ms"
+    : state === "waking"
+      ? "every 2s"
+      : "every 30s";
+%>
+<div id="pc-controls-<%= pc.id %>" class="pc-controls" data-pc-name="<%= pc.name %>" data-status-state="<%= state %>" hx-get="/pcs/<%= pc.id %>/status" hx-trigger="<%= trigger %>" hx-target="this" hx-swap="outerHTML">
+  <div class="status">
+    <span class="status-dot status-<%= state %>" aria-hidden="true"></span>
+    <span class="status-copy">
+      <span class="status-label"><%= statusText %></span>
+      <% if (state === "checking" || state === "waking") { %><span class="sr-only">, please wait</span><% } %>
+    </span>
+  </div>
+  <div class="card-actions">
+    <button class="button button-primary" type="button" hx-post="/pcs/<%= pc.id %>/wake" hx-target="#pc-controls-<%= pc.id %>" hx-swap="outerHTML" hx-disabled-elt="this" <%= state === "waking" ? "disabled" : "" %>>
+      <span aria-hidden="true">↟</span> <%= state === "waking" ? "Waking…" : "Wake" %>
+    </button>
+    <button class="button button-quiet" type="button" hx-get="/pcs/<%= pc.id %>/delete-confirm" hx-target="#delete-dialog-content" hx-swap="innerHTML" data-open-dialog="delete-pc-dialog">
+      Remove
+    </button>
+  </div>
+</div>

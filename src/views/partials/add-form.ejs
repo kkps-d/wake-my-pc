@@ -1,0 +1,30 @@
+<% /* Locals: values?: { name?: string; ipAddress?: string; macAddress?: string }; errors?: Record<string, string>; macMessage?: string. */ %>
+<%
+  const formValues = typeof values !== "undefined" && values ? values : {};
+  const formErrors = typeof errors !== "undefined" && errors ? errors : {};
+%>
+<div class="dialog-heading">
+  <p class="eyebrow">New computer</p>
+  <h2 id="add-dialog-title">Add a PC</h2>
+  <p>Use an IPv4 address on this local network.</p>
+</div>
+<form id="pc-form" class="form-stack" hx-post="/pcs" hx-target="#add-dialog-content" hx-swap="innerHTML" novalidate>
+  <% if (typeof formError !== "undefined" && formError) { %><p class="form-error" role="alert"><%= formError %></p><% } %>
+  <div class="form-field">
+    <label for="pc-name">PC name <span class="field-optional">Optional</span></label>
+    <input id="pc-name" name="name" type="text" value="<%= formValues.name || "" %>" autocomplete="off" maxlength="100" aria-describedby="pc-name-help" />
+    <p id="pc-name-help" class="field-help">Uses the IP address if left blank.</p>
+    <% if (formErrors.name) { %><p class="field-error" role="alert"><%= formErrors.name %></p><% } %>
+  </div>
+  <div class="form-field">
+    <label for="ip-address">IP address</label>
+    <input id="ip-address" name="ipAddress" type="text" inputmode="decimal" value="<%= formValues.ipAddress || "" %>" autocomplete="off" placeholder="192.168.1.25" required aria-invalid="<%= formErrors.ipAddress ? "true" : "false" %>" aria-describedby="ip-address-help ip-address-error" />
+    <p id="ip-address-help" class="field-help">IPv4 only, for example 192.168.1.25.</p>
+    <% if (formErrors.ipAddress) { %><p id="ip-address-error" class="field-error" role="alert"><%= formErrors.ipAddress %></p><% } %>
+  </div>
+  <%- include("mac-field", { value: formValues.macAddress || "", error: formErrors.macAddress, message: typeof macMessage !== "undefined" ? macMessage : undefined }) %>
+  <div class="dialog-actions">
+    <button class="button button-quiet" type="button" data-close-dialog="add-pc-dialog">Cancel</button>
+    <button class="button button-primary" type="submit">Save PC</button>
+  </div>
+</form>

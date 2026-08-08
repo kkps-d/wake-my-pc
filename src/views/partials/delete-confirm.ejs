@@ -1,0 +1,10 @@
+<% /* Locals: pc: PcRecord. Returned into #delete-dialog-content. */ %>
+<div class="dialog-heading">
+  <p class="eyebrow">Remove computer</p>
+  <h2 id="delete-dialog-title">Remove <%= pc.name %>?</h2>
+  <p>This removes <strong><%= pc.ipAddress %></strong> from this app. It does not affect the computer itself.</p>
+</div>
+<form class="dialog-actions" hx-delete="/pcs/<%= pc.id %>" hx-target="#pc-<%= pc.id %>" hx-swap="outerHTML">
+  <button class="button button-quiet" type="button" data-close-dialog="delete-pc-dialog">Cancel</button>
+  <button class="button button-danger" type="submit">Yes, remove PC</button>
+</form>

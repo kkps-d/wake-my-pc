@@ -1,0 +1,5 @@
+<% /* Locals: message: string; title?: string. */ %>
+<div class="error-state" role="alert">
+  <h2><%= typeof title !== "undefined" ? title : "Something went wrong" %></h2>
+  <p><%= message %></p>
+</div>

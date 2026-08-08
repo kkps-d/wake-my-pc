@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="light dark" />
+    <title>Wake My PC</title>
+    <link rel="stylesheet" href="/assets/app.css" />
+    <script src="/vendor/htmx.min.js" defer></script>
+    <script src="/assets/app.js" defer></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main-content">Skip to computers</a>
+    <header class="site-header">
+      <div class="shell header-content">
+        <a class="brand" href="/" aria-label="Wake My PC home">
+          <span class="brand-mark" aria-hidden="true">W</span>
+          <span>Wake My PC</span>
+        </a>
+        <div class="header-actions">
+          <button class="icon-button" type="button" data-theme-toggle aria-label="Switch color theme" aria-pressed="false" title="Switch color theme">
+            <span aria-hidden="true" data-theme-icon>◐</span>
+          </button>
+          <button class="button button-primary" type="button" hx-get="/pcs/new" hx-target="#add-dialog-content" hx-swap="innerHTML" data-open-dialog="add-pc-dialog">
+            <span aria-hidden="true">+</span> Add PC
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <main id="main-content" class="shell page-content">
+      <section class="intro" aria-labelledby="page-title">
+        <p class="eyebrow">Your local network</p>
+        <h1 id="page-title">Your computers</h1>
+        <p>Check availability and wake computers that are ready for Wake-on-LAN.</p>
+      </section>
+      <div id="app-announcement" class="sr-only" aria-live="polite" aria-atomic="true"></div>
+      <%- include("../partials/pc-list", { pcs: typeof pcs !== "undefined" ? pcs : [], statuses: typeof statuses !== "undefined" ? statuses : {} }) %>
+    </main>
+
+    <dialog id="add-pc-dialog" class="app-dialog" aria-labelledby="add-dialog-title">
+      <div id="add-dialog-content" class="dialog-content"></div>
+    </dialog>
+    <dialog id="delete-pc-dialog" class="app-dialog" aria-labelledby="delete-dialog-title">
+      <div id="delete-dialog-content" class="dialog-content"></div>
+    </dialog>
+  </body>
+</html>

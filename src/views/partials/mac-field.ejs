@@ -1,0 +1,13 @@
+<% /* Locals: value?: string; error?: string; message?: string. This is replaced by ARP lookup. */ %>
+<div id="mac-field" class="form-field">
+  <label for="mac-address">MAC address</label>
+  <div class="input-with-action">
+    <input id="mac-address" name="macAddress" type="text" value="<%= typeof value !== "undefined" ? value : "" %>" autocomplete="off" placeholder="AA:BB:CC:DD:EE:FF" required aria-invalid="<%= error ? "true" : "false" %>" aria-describedby="mac-address-help mac-address-error" />
+    <button class="button button-secondary" type="button" hx-post="/network/resolve-mac" hx-include="#pc-form" hx-target="#mac-field" hx-swap="outerHTML" hx-disabled-elt="this">
+      Find
+    </button>
+  </div>
+  <p id="mac-address-help" class="field-help">Enter it manually, or try resolving it from ARP.</p>
+  <% if (message) { %><p class="field-success" role="status"><%= message %></p><% } %>
+  <% if (error) { %><p id="mac-address-error" class="field-error" role="alert"><%= error %></p><% } %>
+</div>

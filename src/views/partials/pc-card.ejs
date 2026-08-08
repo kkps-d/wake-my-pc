@@ -1,0 +1,19 @@
+<% /* Locals: pc: PcRecord; status?: StatusSnapshot. */ %>
+<article id="pc-<%= pc.id %>" class="pc-card">
+  <div class="pc-identity">
+    <div class="pc-heading">
+      <span class="device-icon" aria-hidden="true">▣</span>
+      <div>
+        <h2><%= pc.name %></h2>
+        <p class="ip-address"><%= pc.ipAddress %></p>
+      </div>
+    </div>
+    <dl class="pc-details">
+      <div>
+        <dt>MAC address</dt>
+        <dd><code><%= pc.macAddress %></code></dd>
+      </div>
+    </dl>
+  </div>
+  <%- include("pc-controls", { pc, status: status }) %>
+</article>

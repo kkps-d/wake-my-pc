@@ -1,0 +1,18 @@
+<% /* Locals: pcs: PcRecord[]; statuses?: Record<string, StatusSnapshot>. */ %>
+<% const statusMap = typeof statuses !== "undefined" && statuses ? statuses : {}; %>
+<section id="pc-list" class="pc-list" aria-label="Saved computers">
+  <% if (!pcs.length) { %>
+    <div class="empty-state">
+      <span class="empty-state-icon" aria-hidden="true">⌁</span>
+      <h2>No computers saved yet</h2>
+      <p>Add a computer by its IP address to check its status and wake it from here.</p>
+      <button class="button button-primary" type="button" hx-get="/pcs/new" hx-target="#add-dialog-content" hx-swap="innerHTML" data-open-dialog="add-pc-dialog">Add your first PC</button>
+    </div>
+  <% } else { %>
+    <div class="card-stack">
+      <% pcs.forEach((pc) => { %>
+        <%- include("pc-card", { pc, status: statusMap[pc.id] }) %>
+      <% }) %>
+    </div>
+  <% } %>
+</section>
