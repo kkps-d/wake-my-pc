@@ -5,39 +5,41 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="color-scheme" content="light dark" />
     <title>Wake My PC</title>
+    <script src="/assets/theme.js"></script>
     <link rel="stylesheet" href="/assets/app.css" />
     <script src="/vendor/htmx.min.js" defer></script>
     <script src="/assets/app.js" defer></script>
   </head>
   <body>
     <a class="skip-link" href="#main-content">Skip to computers</a>
-    <header class="site-header">
-      <div class="shell header-content">
-        <a class="brand" href="/" aria-label="Wake My PC home">
-          <span class="brand-mark" aria-hidden="true">W</span>
-          <span>Wake My PC</span>
-        </a>
-        <div class="header-actions">
-          <button class="icon-button" type="button" data-theme-toggle aria-label="Switch color theme" aria-pressed="false" title="Switch color theme">
-            <span aria-hidden="true" data-theme-icon>◐</span>
+    <main id="main-content" class="shell">
+      <div class="page-heading">
+        <h1>Computers</h1>
+        <div class="heading-actions">
+          <button class="button" type="button" hx-get="/pcs/new" hx-target="#add-dialog-content" hx-swap="innerHTML">
+            <%- include("../partials/icon", { name: "plus" }) %> Add computer
           </button>
-          <button class="button button-primary" type="button" hx-get="/pcs/new" hx-target="#add-dialog-content" hx-swap="innerHTML" data-open-dialog="add-pc-dialog">
-            <span aria-hidden="true">+</span> Add PC
-          </button>
+          <div class="theme-picker">
+            <button class="ghost-button" type="button" data-theme-toggle aria-label="Color theme: Auto" aria-haspopup="menu" aria-controls="theme-menu" aria-expanded="false" title="Color theme">
+              <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><use data-theme-icon href="/assets/icons/lucide.svg#monitor"></use></svg>
+            </button>
+            <div id="theme-menu" class="theme-menu" role="menu" aria-label="Color theme" hidden>
+              <% [{ value: "light", label: "Light", icon: "sun" }, { value: "dark", label: "Dark", icon: "moon" }, { value: "auto", label: "Auto", icon: "monitor" }].forEach((option) => { %>
+                <button type="button" role="menuitemradio" aria-checked="<%= option.value === 'auto' %>" data-theme-option="<%= option.value %>">
+                  <%- include("../partials/icon", { name: option.icon }) %><span><%= option.label %></span><span class="theme-selected" aria-hidden="true">✓</span>
+                </button>
+              <% }) %>
+            </div>
+          </div>
         </div>
       </div>
-    </header>
-
-    <main id="main-content" class="shell page-content">
-      <section class="intro" aria-labelledby="page-title">
-        <p class="eyebrow">Your local network</p>
-        <h1 id="page-title">Your computers</h1>
-        <p>Check availability and wake computers that are ready for Wake-on-LAN.</p>
-      </section>
+      <label class="search-field">
+        <span class="sr-only">Search computers</span>
+        <input id="pc-search" type="search" placeholder="Search computers" autocomplete="off" aria-controls="pc-list" />
+      </label>
       <div id="app-announcement" class="sr-only" aria-live="polite" aria-atomic="true"></div>
       <%- include("../partials/pc-list", { pcs: typeof pcs !== "undefined" ? pcs : [], statuses: typeof statuses !== "undefined" ? statuses : {} }) %>
     </main>
-
     <dialog id="add-pc-dialog" class="app-dialog" aria-labelledby="add-dialog-title">
       <div id="add-dialog-content" class="dialog-content"></div>
     </dialog>

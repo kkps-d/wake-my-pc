@@ -1,0 +1,10 @@
+<article id="pc-<%= pc.id %>" class="pc-row" data-search-text="<%= pc.name %> <%= pc.ipAddress %> <%= pc.macAddress %>">
+  <div class="pc-identity">
+    <div class="pc-name-line">
+      <h2><%= pc.name %></h2>
+      <span class="mac-address" aria-label="MAC address <%= pc.macAddress %>"><%= pc.macAddress %></span>
+    </div>
+    <p class="ip-address"><%= pc.ipAddress %></p>
+  </div>
+  <%- include("pc-controls", { pc, status }) %>
+</article>

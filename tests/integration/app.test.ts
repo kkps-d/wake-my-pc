@@ -55,15 +55,19 @@ describe("Wake My PC HTTP application", () => {
     const page = await request(server).get("/").expect(200);
     expect(page.text).toContain("Wake My PC");
     expect(page.text).toContain("No computers saved yet");
+    expect(page.text).toContain('data-theme-option="auto"');
+    expect(page.text).toContain("lucide.svg#monitor");
     expect(page.headers["content-security-policy"]).toContain("default-src 'self'");
 
     await request(server).get("/assets/app.css").expect(200).expect("content-type", /css/);
+    await request(server).get("/assets/theme.js").expect(200).expect("content-type", /javascript/);
+    await request(server).get("/assets/icons/lucide.svg").expect(200).expect("content-type", /svg/);
     await request(server).get("/vendor/htmx.min.js").expect(200).expect("content-type", /javascript/);
   });
 
   it("renders the add form and preserves inline validation errors", async () => {
     const form = await request(server).get("/pcs/new").expect(200);
-    expect(form.text).toContain("Add a PC");
+    expect(form.text).toContain("Add computer");
 
     const invalid = await request(server)
       .post("/pcs")

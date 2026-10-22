@@ -14,7 +14,8 @@ I often use my computer remotely over VPN, and sometimes I forget to turn it on.
 - Resolve MAC addresses from the local ARP table
 - Monitor reachable status with automatic ping checks
 - Send Wake-on-LAN packets and watch for the computer to come online
-- Responsive light and dark interface
+- Compact, searchable computer list with inline MAC addresses
+- Light, dark, and automatic themes that follow your device setting
 - Runs on Windows, macOS, and Linux
 
 ## Setup

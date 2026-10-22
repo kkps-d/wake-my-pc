@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>Wake My PC — UI previews</title>
+  <link rel="stylesheet" href="/assets/preview.css">
+  <script src="/assets/preview.js" defer></script>
+</head>
+<body>
+  <a class="skip" href="#main">Skip to computers</a>
+  <nav class="preview-bar" aria-label="Design previews">
+    <span class="preview-label">UI PREVIEWS</span>
+    <div class="variants">
+      <a href="?variant=simple" data-variant="simple">Simple</a>
+      <a href="?variant=index" data-variant="index"><span>01</span> Index</a>
+      <a href="?variant=switchboard" data-variant="switchboard"><span>02</span> Switchboard</a>
+      <a href="?variant=console" data-variant="console"><span>03</span> Console</a>
+    </div>
+    <span class="sample-label">SAMPLE DATA</span>
+  </nav>
+  <div id="app"></div>
+  <div id="announcement" class="sr-only" role="status" aria-live="polite"></div>
+  <dialog id="add-dialog" aria-labelledby="add-title">
+    <form id="add-form">
+      <div class="dialog-top"><h2 id="add-title">Add computer</h2><button type="button" class="close-dialog ghost-button" aria-label="Close"><svg aria-hidden="true"><use href="/assets/icons/lucide.svg#x"></use></svg></button></div>
+      <label for="name">Name</label><input id="name" name="name" required maxlength="100" autocomplete="off" placeholder="Office PC">
+      <label for="ip">IP address</label><input id="ip" name="ip" required placeholder="192.168.1.20" autocomplete="off" inputmode="decimal">
+      <label for="mac">MAC address</label><input id="mac" name="mac" required placeholder="AA:BB:CC:DD:EE:FF" autocomplete="off">
+      <p id="form-error" role="alert"></p>
+      <div class="dialog-actions"><button type="button" class="text-button close-dialog">Cancel</button><button class="primary" type="submit"><svg aria-hidden="true"><use href="/assets/icons/lucide.svg#plus"></use></svg>Add computer</button></div>
+    </form>
+  </dialog>
+  <dialog id="remove-dialog" aria-labelledby="remove-title" aria-describedby="remove-description">
+    <h2 id="remove-title">Remove computer?</h2>
+    <p id="remove-description">Remove <strong id="remove-name"></strong> from the list?</p>
+    <div class="dialog-actions">
+      <button type="button" class="text-button" data-cancel-remove autofocus>Cancel</button>
+      <button type="button" class="delete-button" data-confirm-remove>Remove computer</button>
+    </div>
+  </dialog>
+</body>
+</html>

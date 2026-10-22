@@ -1,38 +1,17 @@
 (() => {
   "use strict";
-
-  const themeKey = "wake-my-pc-theme";
-  const root = document.documentElement;
   const knownStatuses = new Map();
   const announcement = () => document.getElementById("app-announcement");
-
-  function applyTheme(theme) {
-    root.dataset.theme = theme;
-    const toggle = document.querySelector("[data-theme-toggle]");
-    const icon = document.querySelector("[data-theme-icon]");
-    const isDark = theme === "dark";
-    if (toggle) {
-      toggle.setAttribute("aria-pressed", String(isDark));
-      toggle.setAttribute("aria-label", isDark ? "Use light color theme" : "Use dark color theme");
-      toggle.setAttribute("title", isDark ? "Use light color theme" : "Use dark color theme");
-    }
-    if (icon) icon.textContent = isDark ? "☀" : "◐";
-  }
-
-  function storedTheme() {
-    try { return localStorage.getItem(themeKey); } catch (_) { return null; }
-  }
-
-  function initialiseTheme() {
-    const saved = storedTheme();
-    applyTheme(saved === "dark" || saved === "light" ? saved : (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"));
-  }
+  let dialogOpener = null;
 
   function openDialog(dialogId) {
     const dialog = document.getElementById(dialogId);
     if (!(dialog instanceof HTMLDialogElement)) return;
-    if (!dialog.open) dialog.showModal();
-    const focusable = dialog.querySelector("input, button, [tabindex]:not([tabindex='-1'])");
+    if (!dialog.open) {
+      dialogOpener = document.activeElement;
+      dialog.showModal();
+    }
+    const focusable = dialog.querySelector('input[aria-invalid="true"]') || dialog.querySelector("input") || dialog.querySelector("button, [tabindex]:not([tabindex='-1'])");
     if (focusable instanceof HTMLElement) focusable.focus();
   }
 
@@ -46,9 +25,24 @@
     if (region) region.textContent = message;
   }
 
+  function syncList() {
+    const search = document.getElementById("pc-search");
+    const query = search ? search.value.trim().toLowerCase() : "";
+    const rows = Array.from(document.querySelectorAll(".pc-row"));
+    let matches = 0;
+    rows.forEach(row => {
+      row.hidden = !(row.dataset.searchText || "").toLowerCase().includes(query);
+      if (!row.hidden) matches++;
+    });
+    const empty = document.querySelector("#pc-list .empty-state");
+    const noResults = document.querySelector("#pc-list .search-empty");
+    if (empty) empty.hidden = rows.length > 0;
+    if (noResults) noResults.hidden = rows.length === 0 || matches > 0;
+  }
+
   function syncStatuses(announceChanges) {
     const present = new Set();
-    document.querySelectorAll("[data-status-state]").forEach((controls) => {
+    document.querySelectorAll("[data-status-state]").forEach(controls => {
       const id = controls.id;
       const state = controls.getAttribute("data-status-state");
       const name = controls.getAttribute("data-pc-name") || "PC";
@@ -71,42 +65,48 @@
   }
 
   document.addEventListener("DOMContentLoaded", () => {
-    initialiseTheme();
     syncStatuses(false);
-    document.addEventListener("click", (event) => {
-      const element = event.target instanceof Element ? event.target.closest("[data-theme-toggle], [data-close-dialog]") : null;
-      if (!element) return;
-      if (element.hasAttribute("data-theme-toggle")) {
-        const next = root.dataset.theme === "dark" ? "light" : "dark";
-        try { localStorage.setItem(themeKey, next); } catch (_) { /* storage is optional */ }
-        applyTheme(next);
-      }
-      const dialogId = element.getAttribute("data-close-dialog");
-      if (dialogId) closeDialog(dialogId);
+    syncList();
+    document.addEventListener("click", event => {
+      const element = event.target instanceof Element ? event.target.closest("[data-close-dialog]") : null;
+      if (element) closeDialog(element.getAttribute("data-close-dialog"));
     });
-
-    document.querySelectorAll("dialog.app-dialog").forEach((dialog) => {
-      dialog.addEventListener("click", (event) => {
-        if (event.target === dialog) dialog.close();
+    document.getElementById("pc-search")?.addEventListener("input", syncList);
+    document.addEventListener("keydown", event => {
+      if (event.key === "/" && !event.ctrlKey && !event.metaKey && !event.altKey && event.target instanceof Element && !event.target.matches("input, textarea, select, [contenteditable]") && !document.querySelector("dialog[open]")) {
+        const search = document.getElementById("pc-search");
+        if (search) { event.preventDefault(); search.focus(); }
+      }
+    });
+    document.querySelectorAll("dialog.app-dialog").forEach(dialog => {
+      dialog.addEventListener("click", event => {
+        if (event.target !== dialog) return;
+        const bounds = dialog.getBoundingClientRect();
+        if (event.clientX < bounds.left || event.clientX > bounds.right || event.clientY < bounds.top || event.clientY > bounds.bottom) dialog.close();
       });
       dialog.addEventListener("close", () => {
-        const content = dialog.querySelector(".dialog-content");
-        if (content) content.replaceChildren();
+        dialog.querySelector(".dialog-content")?.replaceChildren();
+        if (dialogOpener instanceof HTMLElement && dialogOpener.isConnected) dialogOpener.focus();
+        else document.getElementById("pc-search")?.focus();
+        dialogOpener = null;
       });
     });
   });
 
-  document.body.addEventListener("htmx:afterSwap", (event) => {
+  document.body.addEventListener("htmx:afterSwap", event => {
     const target = event.detail.target;
     if (!(target instanceof Element)) return;
     if (target.id === "add-dialog-content") openDialog("add-pc-dialog");
     if (target.id === "delete-dialog-content") openDialog("delete-pc-dialog");
     syncStatuses(true);
+    syncList();
   });
-
-  document.body.addEventListener("openAddDialog", () => openDialog("add-pc-dialog"));
+  // An empty outerHTML delete has no replacement element to emit afterSwap.
+  document.body.addEventListener("htmx:afterRequest", () => {
+    syncStatuses(true);
+    syncList();
+  });
   document.body.addEventListener("closeAddDialog", () => closeDialog("add-pc-dialog"));
-  document.body.addEventListener("openDeleteDialog", () => openDialog("delete-pc-dialog"));
   document.body.addEventListener("closeDeleteDialog", () => closeDialog("delete-pc-dialog"));
   document.body.addEventListener("htmx:responseError", () => announce("The request could not be completed. Please try again."));
   document.body.addEventListener("htmx:sendError", () => announce("Cannot reach the server. Check that Wake My PC is running."));
