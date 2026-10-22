@@ -1,0 +1,20 @@
+services:
+  wake-my-pc:
+    image: wake-my-pc:local
+    build: .
+    # Share the host LAN interface for ARP and UDP broadcasts.
+    # Alternatively, use compose.macvlan.yaml for a dedicated LAN IP.
+    # No ports: mapping is used; PORT is the port on the Docker host.
+    network_mode: host
+    init: true
+    restart: unless-stopped
+    environment:
+      HOST: ${HOST:-0.0.0.0}
+      PORT: ${PORT:-3000}
+      DATA_FILE: /app/data/pcs.json
+      WOL_BROADCAST_ADDRESS: ${WOL_BROADCAST_ADDRESS:-}
+    volumes:
+      - pc-data:/app/data
+
+volumes:
+  pc-data:

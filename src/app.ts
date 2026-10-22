@@ -74,6 +74,10 @@ export function createApp(dependencies: AppDependencies): Express {
   );
   app.use(requireSameOrigin);
 
+  app.get("/healthz", (_request, response) => {
+    response.json({ status: "ok" });
+  });
+
   app.get("/", async (_request, response, next) => {
     try {
       const pcs = await dependencies.repository.list();

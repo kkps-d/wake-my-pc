@@ -1,0 +1,15 @@
+# Only application/build inputs enter the build context. In particular, never
+# upload .env (including Portainer credentials), Git history or saved computers.
+**
+!Dockerfile
+!.dockerignore
+!package.json
+!package-lock.json
+!tsconfig.json
+!src/
+!src/**
+!docker/
+!docker/healthcheck.mjs
+src/public/preview.*
+**/.DS_Store
+**/.env*

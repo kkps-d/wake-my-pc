@@ -51,6 +51,15 @@ describe("Wake My PC HTTP application", () => {
     });
   }
 
+  it("serves a health probe without querying saved PCs or the network", async () => {
+    const list = vi.spyOn(repository, "list").mockRejectedValue(new Error("Storage unavailable"));
+    const response = await request(server).get("/healthz").expect(200);
+    expect(response.body).toEqual({ status: "ok" });
+    expect(list).not.toHaveBeenCalled();
+    expect(wakeCoordinator.getStatus).not.toHaveBeenCalled();
+    expect(arpService.resolve).not.toHaveBeenCalled();
+  });
+
   it("renders the empty application and serves local browser assets", async () => {
     const page = await request(server).get("/").expect(200);
     expect(page.text).toContain("Wake My PC");

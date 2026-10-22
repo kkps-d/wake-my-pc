@@ -17,6 +17,7 @@ I often use my computer remotely over VPN, and sometimes I forget to turn it on.
 - Compact, searchable computer list with inline MAC addresses
 - Light, dark, and automatic themes that follow your device setting
 - Runs on Windows, macOS, and Linux
+- Docker image and Compose setup for Linux hosts
 
 ## Setup
 
@@ -42,6 +43,26 @@ For a production build:
 npm run build
 npm start
 ```
+
+### Docker (Linux)
+
+```sh
+docker compose up -d --build
+```
+
+Open `http://<docker-host-ip>:3000`. Host networking requires a Linux device on the same LAN as your PCs. Set `PORT` and `WOL_BROADCAST_ADDRESS` via environment variables or `.env` as needed.
+
+Saved computers are stored in `/app/data/pcs.json` in the persistent `pc-data` volume. Existing local data is not imported automatically.
+
+For an existing macvlan network, set `MACVLAN_IP` to a reserved IP in its subnet and optionally `MACVLAN_NETWORK` (default `macvlan`), then run:
+
+```sh
+docker compose -f compose.macvlan.yaml up -d --build
+```
+
+Open `http://<container-ip>:3000`. The network must be on the target PCs' LAN/VLAN. Macvlan isolates the container from its Docker host unless you configure a host-side interface or an additional network.
+
+For Portainer, build `wake-my-pc:local` on the target environment and deploy either Compose file with `build: .` removed. Keep the same stack/project name when switching network modes to reuse the saved-PC volume.
 
 ### Configuration
 

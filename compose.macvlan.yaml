@@ -1,0 +1,24 @@
+services:
+  wake-my-pc:
+    image: wake-my-pc:local
+    build: .
+    init: true
+    restart: unless-stopped
+    environment:
+      HOST: 0.0.0.0
+      PORT: ${PORT:-3000}
+      DATA_FILE: /app/data/pcs.json
+      WOL_BROADCAST_ADDRESS: ${WOL_BROADCAST_ADDRESS:-}
+    volumes:
+      - pc-data:/app/data
+    networks:
+      lan:
+        ipv4_address: ${MACVLAN_IP:?Set MACVLAN_IP to a reserved LAN address}
+
+volumes:
+  pc-data:
+
+networks:
+  lan:
+    external: true
+    name: ${MACVLAN_NETWORK:-macvlan}
