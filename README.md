@@ -1,5 +1,7 @@
 # Wake My PC
 
+[Prompt](prompt.md)
+
 A simple, local-first web app for checking whether computers on your LAN are reachable and waking them with Wake-on-LAN. Built with Node.js, TypeScript, Express, HTMX, and a JSON file—no database or cloud service required.
 
 ![Wake My PC dashboard](docs/screenshot.jpg)
