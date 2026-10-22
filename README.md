@@ -8,7 +8,7 @@ A simple, local-first web app for checking whether computers on your LAN are rea
 
 ## Why
 
-I often use my computer remotely over VPN, and sometimes I forget to turn it on. Hence, this is the solution, vibecoded with 5.6 Sol and 5.6 Terra subagents.
+I often use my computer remotely over VPN, and sometimes I forget to turn it on. Hence, this is the solution. Vibe coded with Codex.
 
 ## Features
 
@@ -81,3 +81,7 @@ For Portainer, build `wake-my-pc:local` on the target environment and deploy eit
 - ARP lookup is best-effort and normally requires the target to be awake and on the same subnet.
 - “Unreachable” means the computer did not answer ICMP ping; it does not necessarily mean it is powered off.
 - The app has no login and is intended for a trusted LAN. Do not expose it directly to the public internet.
+
+## License
+
+[MIT](LICENSE).

@@ -1,0 +1,7 @@
+node_modules/
+dist/
+.env
+data/pcs.json
+data/*.tmp
+coverage/
+.DS_Store
